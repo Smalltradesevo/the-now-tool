@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sphere of Influence Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .tier-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .tier-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .tier-option.gold {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .tier-option.titanium {
+            border-color: #95a5a6;
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .tier-option.selected {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tags-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .tag-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .tag-option.connector {
+            border-color: #9b59b6;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .tag-option.maven {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .tag-option.selected {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .contacts-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .contacts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card.gold {
+            border-left-color: #f39c12;
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.05), white);
+        }
+
+        .contact-card.titanium {
+            border-left-color: #95a5a6;
+            background: linear-gradient(90deg, rgba(149, 165, 166, 0.05), white);
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .contact-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .contact-tier {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tier-gold {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .tier-titanium {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .tier-regular {
+            background: #ecf0f1;
+            color: #7f8c8d;
+        }
+
+        .contact-info {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .contact-relationship {
+            color: #3498db;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .contact-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .contact-tag {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tag-connector {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .tag-maven {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .tier-selector {
+                flex-direction: column;
+            }
+            
+            .tags-selector {
+                flex-direction: column;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Sphere of Influence Builder</h1>
+            <p>Build and manage your professional network with tier-based contact management</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>👤 Add New Contact</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="position">Position/Title</label>
+                        <input type="text" id="position" name="position">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="relationship">Relationship Type</label>
+                        <select id="relationship" name="relationship">
+                            <option value="colleague">Colleague</option>
+                            <option value="client">Client</option>
+                            <option value="vendor">Vendor</option>
+                            <option value="partner">Business Partner</option>
+                            <option value="referral">Referral Source</option>
+                            <option value="mentor">Mentor</option>
+                            <option value="family">Family</option>
+                            <option value="family">Family</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Tier</label>
+                        <div class="tier-selector">
+                            <div class="tier-option" data-tier="regular">
+                                <strong>Regular</strong><br>
+                                <small>Standard Contact</small>
+                            </div>
+                            <div class="tier-option gold" data-tier="gold">
+                                <strong>🥇 Gold</strong><br>
+                                <small>High Value</small>
+                            </div>
+                            <div class="tier-option titanium" data-tier="titanium">
+                                <strong>💎 Titanium</strong><br>
+                                <small>Premium Tier</small>
+                            </div>
+                        </div>
+                        <input type="hidden" id="tier" name="tier" value="regular">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Special Tags</label>
+                        <div class="tags-selector">
+                            <div class="tag-option" data-tag="connector">
+                                <strong>🔗 Connector</strong><br>
+                                <small>Network Hub</small>
+                            </div>
+                            <div class="tag-option" data-tag="maven">
+                                <strong>🎯 Maven</strong><br>
+                                <small>Expert/Influencer</small>
+                            </div>
+                        </div>
+                        <input type="hidden" id="tags" name="tags" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Additional notes about this contact..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn">Add Contact</button>
+                </form>
+            </div>
+
+            <div class="contacts-section">
+                <div class="contacts-header">
+                    <h2>📋 Your Sphere of Influence</h2>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalContacts">0</div>
+                        <div class="stat-label">Total Contacts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="goldContacts">0</div>
+                        <div class="stat-label">Gold Tier</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="titaniumContacts">0</div>
+                        <div class="stat-label">Titanium Tier</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="connectorContacts">0</div>
+                        <div class="stat-label">Connectors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="mavenContacts">0</div>
+                        <div class="stat-label">Mavens</div>
+                    </div>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search contacts...">
+                    <select class="filter-select" id="tierFilter">
+                        <option value="all">All Tiers</option>
+                        <option value="titanium">Titanium</option>
+                        <option value="gold">Gold</option>
+                        <option value="regular">Regular</option>
+                    </select>
+                    <select class="filter-select" id="relationshipFilter">
+                        <option value="all">All Relationships</option>
+                        <option value="colleague">Colleague</option>
+                        <option value="client">Client</option>
+                        <option value="vendor">Vendor</option>
+                        <option value="partner">Business Partner</option>
+                        <option value="referral">Referral Source</option>
+                        <option value="mentor">Mentor</option>
+                        <option value="friend">Friend</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div id="contactsList">
+                    <div class="empty-state">
+                        No contacts yet. Add your first contact to get started!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let contacts = [];
+        let selectedTier = 'regular';
+        let selectedTags = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateStats();
+            renderContacts();
+        });
+
+        function setupEventListeners() {
+            // Tier selection
+            document.querySelectorAll('.tier-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.tier-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedTier = this.dataset.tier;
+                    document.getElementById('tier').value = selectedTier;
+                });
+            });
+
+            // Tag selection (multiple selection allowed)
+            document.querySelectorAll('.tag-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const tag = this.dataset.tag;
+                    if (selectedTags.includes(tag)) {
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                        this.classList.remove('selected');
+                    } else {
+                        selectedTags.push(tag);
+                        this.classList.add('selected');
+                    }
+                    document.getElementById('tags').value = selectedTags.join(',');
+                });
+            });
+
+            // Form submission
+            document.getElementById('contactForm').addEventListener('submit', handleFormSubmit);
+
+            // Search and filter
+            document.getElementById('searchInput').addEventListener('input', filterContacts);
+            document.getElementById('tierFilter').addEventListener('change', filterContacts);
+            document.getElementById('relationshipFilter').addEventListener('change', filterContacts);
+
+            // Set default tier selection
+            document.querySelector('.tier-option[data-tier="regular"]').classList.add('selected');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const contact = {
+                id: Date.now(),
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                company: formData.get('company'),
+                position: formData.get('position'),
+                relationship: formData.get('relationship'),
+                tier: selectedTier,
+                tags: selectedTags.slice(), // Create a copy of the array
+                notes: formData.get('notes'),
+                dateAdded: new Date().toLocaleDateString()
+            };
+
+            contacts.push(contact);
+            updateStats();
+            renderContacts();
+            
+            // Reset form
+            e.target.reset();
+            document.querySelectorAll('.tier-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.tag-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('.tier-option[data-tier="regular"]').classList.add('selected');
+            selectedTier = 'regular';
+            selectedTags = [];
+            document.getElementById('tier').value = 'regular';
+            document.getElementById('tags').value = '';
+            
+            // Show success feedback
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Contact Added!';
+            submitBtn.style.background = '#27ae60';
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.background = '';
+            }, 2000);
+        }
+
+        function updateStats() {
+            const total = contacts.length;
+            const gold = contacts.filter(c => c.tier === 'gold').length;
+            const titanium = contacts.filter(c => c.tier === 'titanium').length;
+            const connectors = contacts.filter(c => c.tags && c.tags.includes('connector')).length;
+            const mavens = contacts.filter(c => c.tags && c.tags.includes('maven')).length;
+
+            document.getElementById('totalContacts').textContent = total;
+            document.getElementById('goldContacts').textContent = gold;
+            document.getElementById('titaniumContacts').textContent = titanium;
+            document.getElementById('connectorContacts').textContent = connectors;
+            document.getElementById('mavenContacts').textContent = mavens;
+        }
+
+        function renderContacts(filteredContacts = null) {
+            const contactsToRender = filteredContacts || contacts;
+            const contactsList = document.getElementById('contactsList');
+
+            if (contactsToRender.length === 0) {
+                contactsList.innerHTML = '<div class="empty-state">No contacts match your search criteria.</div>';
+                return;
+            }
+
+            contactsList.innerHTML = contactsToRender.map(contact => `
+                <div class="contact-card ${contact.tier}">
+                    <div class="contact-header">
+                        <h3 class="contact-name">${contact.name}</h3>
+                        <div class="contact-tier-container">
+                            <span class="contact-tier tier-${contact.tier}">
+                                ${contact.tier === 'gold' ? '🥇 Gold' : contact.tier === 'titanium' ? '💎 Titanium' : 'Regular'}
+                            </span>
+                            <button class="delete-btn" onclick="deleteContact(${contact.id})">Delete</button>
+                        </div>
+                    </div>
+                    ${contact.tags && contact.tags.length > 0 ? `
+                        <div class="contact-tags">
+                            ${contact.tags.map(tag => `<span class="contact-tag tag-${tag}">${tag === 'connector' ? '🔗 Connector' : '🎯 Maven'}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="contact-info">
+                        ${contact.email ? `📧 ${contact.email}` : ''}
+                        ${contact.phone ? `📱 ${contact.phone}` : ''}
+                    </div>
+                    <div class="contact-info">
+                        ${contact.company ? `🏢 ${contact.company}` : ''}
+                        ${contact.position ? ` - ${contact.position}` : ''}
+                    </div>
+                    <div class="contact-relationship">
+                        🤝 ${contact.relationship.charAt(0).toUpperCase() + contact.relationship.slice(1)}
+                    </div>
+                    ${contact.notes ? `<div class="contact-info" style="margin-top: 10px; font-style: italic;">💭 ${contact.notes}</div>` : ''}
+                    <div class="contact-info" style="margin-top: 10px; font-size: 12px;">
+                        Added: ${contact.dateAdded}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteContact(id) {
+            if (confirm('Are you sure you want to delete this contact?')) {
+                contacts = contacts.filter(contact => contact.id !== id);
+                updateStats();
+                renderContacts();
+            }
+        }
+
+        function filterContacts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tierFilter = document.getElementById('tierFilter').value;
+            const relationshipFilter = document.getElementById('relationshipFilter').value;
+
+            const filtered = contacts.filter(contact => {
+                const matchesSearch = contact.name.toLowerCase().includes(searchTerm) ||
+                                    (contact.email && contact.email.toLowerCase().includes(searchTerm)) ||
+                                    (contact.company && contact.company.toLowerCase().includes(searchTerm)) ||
+                                    (contact.position && contact.position.toLowerCase().includes(searchTerm));
+
+                const matchesTier = tierFilter === 'all' || contact.tier === tierFilter;
+                const matchesRelationship = relationshipFilter === 'all' || contact.relationship === relationshipFilter;
+
+                return matchesSearch && matchesTier && matchesRelationship;
+            });
+
+            renderContacts(filtered);
+        }
+    </script>
+</body>
+</html>
